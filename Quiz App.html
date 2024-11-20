@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz">
+            <p class="question" id="question">Loading...</p>
+            <ul class="options" id="options"></ul>
+            <button id="next" onclick="nextQuestion()">Next</button>
+        </div>
+        <div id="result" style="display: none;">
+            <h2>Your Score: <span id="score"></span></h2>
+            <button onclick="restartQuiz()">Restart</button>
+        </div>
+    </div>
+    <script>
+        const quizData = [
+            { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Text Markup Language", "Hyperlinks Text Mark Language"], answer: 0 },
+            { question: "What is the correct syntax for a link in HTML?", options: ["<a href='url'>Link</a>", "<link url='url'>", "<a>url</a>"], answer: 0 },
+            { question: "Which tag is used to create a paragraph?", options: ["<p>", "<para>", "<paragraph>"], answer: 0 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const quiz = document.getElementById("quiz");
+            const questionEl = document.getElementById("question");
+            const optionsEl = document.getElementById("options");
+            
+            questionEl.innerText = quizData[currentQuestion].question;
+            optionsEl.innerHTML = "";
+            
+            quizData[currentQuestion].options.forEach((option, index) => {
+                const li = document.createElement("li");
+                li.innerHTML = `<label><input type="radio" name="option" value="${index}"> ${option}</label>`;
+                optionsEl.appendChild(li);
+            });
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an option!");
+                return;
+            }
+            
+            const answer = parseInt(selectedOption.value);
+            if (answer === quizData[currentQuestion].answer) {
+                score++;
+            }
+            
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            document.getElementById("score").innerText = `${score} / ${quizData.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("result").style.display = "none";
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
